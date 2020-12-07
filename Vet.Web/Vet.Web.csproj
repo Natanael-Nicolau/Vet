@@ -9,4 +9,14 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Clients\" />
+    <Folder Include="Models\Employees\" />
+    <Folder Include="Models\Doctors\" />
+    <Folder Include="Models\Animals\" />
+    <Folder Include="Models\Appointments\" />
+    <Folder Include="Models\InsuranceCompanies\" />
+    <Folder Include="Views\Account\" />
+  </ItemGroup>
+
 </Project>
