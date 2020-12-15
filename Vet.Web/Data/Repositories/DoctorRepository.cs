@@ -19,9 +19,8 @@ namespace Vet.Web.Data.Repositories
         public async Task<Doctor> GetDoctorByUserId(string userId)
         {
             return await _context.Doctors
-                .Include(d => d.Employee)
-                .ThenInclude(e => e.User)
-                .Where(d => d.Employee.UserId == userId)
+                .Include(d => d.User)
+                .Where(d => d.UserId == userId)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
@@ -29,19 +28,27 @@ namespace Vet.Web.Data.Repositories
         public async Task<Doctor> GetDoctorByUserEmail(string email)
         {
             return await _context.Doctors
-                .Include(d => d.Employee)
-                .ThenInclude(e => e.User)
-                .Where(d => d.Employee.UserId == email)
+                .Include(d => d.User)
                 .AsNoTracking()
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(d => d.User.Email == email);
         }
 
 
         public IQueryable<Doctor> GetAllWithUserAsync()
         {
             return _context.Doctors
-                .Include(d => d.Employee)
-                .ThenInclude(e => e.User)
+                .Include(d => d.User)
+                .Where(d => !d.IsDeleted)
+                .AsNoTracking();
+        }
+
+        public IQueryable<Doctor> GetAllWithUsersAndSpecialityAsync()
+        {
+            return _context.Doctors
+                .Include(d => d.User)
+                .Include(d => d.Room)
+                .ThenInclude(d => d.Speciality)
+                .Where(d => !d.IsDeleted)
                 .AsNoTracking();
         }
     }

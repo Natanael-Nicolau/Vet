@@ -1,0 +1,167 @@
+﻿@model Vet.Web.Models.Account.RegisterViewModel
+
+@{ 
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>E-Vet - Register</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/adminTemplate/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/adminTemplate/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/adminTemplate/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition register-page">
+    <div class="register-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="../../index2.html" class="h1"><b>Web Vet</b></a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">Register a new Account</p>
+
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!--FirstName-->
+
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="FirstName" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--FirstName End-->
+                    <!--LastName-->
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="LastName" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--LastName End-->
+                    <!--Email-->
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="Email" type="email" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Email End-->                    
+                    <!--NIF-->
+                    <span asp-validation-for="NIF" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="NIF" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-credit-card"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--NIF End-->
+                    <!--DateOfBirth-->
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="DateOfBirth" type="date" class="form-control">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-calendar-alt"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--DateOfBirth End-->
+                    <!--InsuranceCompanyId-->
+                    <span asp-validation-for="InsuranceCompanyId" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <select asp-for="InsuranceCompanyId" asp-items="Model.InsuranceCompanies" class="form-control"></select>
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-briefcase"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--InsuranceCompanyId End-->
+                    <!--DateOfBirth-->
+                    <span asp-validation-for="PolicyNumber" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input asp-for="PolicyNumber" class="form-control" disabled="disabled">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-credit-card"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--DateOfBirth End-->
+                    <!-- /.col -->
+                    <div class="text-success">
+                        <p>
+                            @ViewBag.Message
+                        </p>
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                    <!-- /.col -->
+                </form>
+
+                @*<div class="social-auth-links text-center">
+                        <a href="#" class="btn btn-block btn-primary">
+                            <i class="fab fa-facebook mr-2"></i>
+                            Sign up using Facebook
+                        </a>
+                        <a href="#" class="btn btn-block btn-danger">
+                            <i class="fab fa-google-plus mr-2"></i>
+                            Sign up using Google+
+                        </a>
+                    </div>*@
+
+                <a asp-action="Login" class="text-center">I already have an account</a>
+            </div>
+            <!-- /.form-box -->
+        </div><!-- /.card -->
+    </div>
+    <!-- /.register-box -->
+    <!-- jQuery -->
+    <script src="~/adminTemplate/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/adminTemplate/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/adminTemplate/dist/js/adminlte.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#InsuranceCompanyId").change(function () {
+                if ($("#InsuranceCompanyId").val() !== '0') {
+                    $('#PolicyNumber').prop('disabled', false);
+                }
+                else {
+                    $('#PolicyNumber').prop('disabled', true);
+                }
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>
+
+

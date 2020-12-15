@@ -13,5 +13,7 @@ namespace Vet.Web.Data.Repositories
         Task<Doctor> GetDoctorByUserEmail(string email);
 
         IQueryable<Doctor> GetAllWithUserAsync();
+
+        IQueryable<Doctor> GetAllWithUsersAndSpecialityAsync();
     }
 }

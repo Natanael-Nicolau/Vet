@@ -1,0 +1,221 @@
+﻿@model Vet.Web.Models.Appointments.CreateViewModel
+
+@{
+    ViewData["Title"] = "New Appointment";
+    ViewData["PageHeader"] = "Create";
+}
+
+
+
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Appointment for @Html.DisplayFor(model => model.AnimalName)</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="post" enctype="multipart/form-data">
+                <div class="card-body">
+                    <!--Validation Summary-->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="AnimalId" class="form-control">
+                    <!--Day-->
+                    <div class="form-group">
+                        <label asp-for="Day"></label>
+                        <input asp-for="Day" type="date" class="form-control">
+                        <span asp-validation-for="Day" class="text-danger"></span>
+                    </div>
+                    <!--Day End-->
+                    <!--SpecialityId-->
+                    <div class="form-group">
+                        <label asp-for="SpecialityId"></label>
+                        <select asp-for="SpecialityId" asp-items="Model.Specialities" class="form-control"></select>
+                        <span asp-validation-for="SpecialityId" class="text-danger"></span>
+                    </div>
+                    <!--SpecialityId End-->
+                    <!--RoomId-->
+                    <div class="form-group">
+                        <label asp-for="RoomId"></label>
+                        <select asp-for="RoomId" asp-items="Model.Rooms" class="form-control"></select>
+                        <span asp-validation-for="RoomId" class="text-danger"></span>
+                    </div>
+                    <!--RoomId End-->
+                    <!--DoctorId-->
+                    <div class="form-group">
+                        <label asp-for="DoctorId"></label>
+                        <select asp-for="DoctorId" asp-items="Model.Doctors" class="form-control"></select>
+                        <span asp-validation-for="DoctorId" class="text-danger"></span>
+                    </div>
+                    <!--DoctorId End-->
+                    <!--AppointmentTime-->
+                    <div class="form-group">
+                        <label asp-for="AppointmentTime"></label>
+                        <select asp-for="AppointmentTime" asp-items="Model.AvailableHours" class="form-control"></select>
+                        <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                    </div>
+                    <!--AppointmentTime End-->
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <div class="text-success">
+                        <p>
+                            @ViewBag.Message
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+<!-- /.row -->
+
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#SpecialityId").change(function () {
+                $("#RoomId").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetRoomsAsync")',
+                    dataType: 'json',
+                    data: { specialityId: $("#SpecialityId").val() },
+                    success: function (rooms) {
+                        $.each(rooms, function (i, room) {
+                            $("#RoomId").append('<option value="'
+                                + room.value + '">'
+                                + room.text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed updating the rooms.' + ex);
+                    }
+                });
+                return false;
+            });
+        });
+
+        $(document).ready(function () {
+            $("#RoomId").change(function () {
+                $("#DoctorId").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetDoctorsAsync")',
+                    dataType: 'json',
+                    data: { roomId: $("#RoomId").val() },
+                    success: function (doctors) {
+                        $.each(doctors, function (i, doctor) {
+                            $("#DoctorId").append('<option value="'
+                                + doctor.value + '">'
+                                + doctor.text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed updating the Doctors.' + ex);
+                    }
+                });
+                return false;
+            });
+        });
+
+        $(document).ready(function () {
+            $("#DoctorId").change(function () {
+                $("#AppointmentTime").empty();
+
+                console.log('doctor changed');
+                console.log($("#DoctorId").val());
+                console.log($('#Day').val());
+                console.log(Date.now());
+                console.log(Date.now().toString());
+                //&& $('#Day').val() >= Date.now()
+                if ($("#DoctorId").val() > 0) {
+
+
+                    $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetAvailableAppointmentsAsync")',
+                    dataType: 'json',
+                    data: { doctorId: $("#DoctorId").val(), day: $('#Day').val() },
+                    success: function (availableHours) {
+                        $.each(availableHours, function (i, available) {
+                            $("#AppointmentTime").append('<option value="'
+                                + available.value + '">'
+                                + available.text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed updating the Appointment Times.' + ex);
+                    }
+                    });
+
+
+                }
+                return false;
+            });
+        });
+
+        $(document).ready(function () {
+            $("#Day").change(function () {
+                $("#AppointmentTime").empty();
+
+                console.log('date changed');
+                console.log($("#DoctorId").val());
+                console.log($('#Day').val());
+                console.log(Date.now().toString());
+
+                if ($("#DoctorId").val() > 0) {
+                    $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetAvailableAppointmentsAsync")',
+                    dataType: 'json',
+                    data: { doctorId: $("#DoctorId").val(), day: $('#Day').val() },
+                    success: function (availableHours) {
+                        $.each(availableHours, function (i, available) {
+                            $("#AppointmentTime").append('<option value="'
+                                + available.value + '">'
+                                + available.text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed updating the Appointment Times.' + ex);
+                    }
+                });
+                }
+
+                return false;
+            });
+        });
+
+
+
+
+        $(document).ready(function () {
+            $("#Role").change(function () {
+                if ($("#Role").val() === 'Doctor') {
+                    $('#AppointmentDuration').prop('disabled', false);
+                    $('#SpecialityId').prop('disabled', false);
+                    $('#RoomId').prop('disabled', false);
+                }
+                else {
+                    $('#AppointmentDuration').prop('disabled', true);
+                    $('#SpecialityId').prop('disabled', true);
+                    $('#RoomId').prop('disabled', true);
+                }
+                return false;
+            });
+        });
+
+    </script>
+
+
+
+    <script type="text/javascript">
+        
+    </script>
+}

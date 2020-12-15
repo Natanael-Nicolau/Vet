@@ -35,12 +35,15 @@ namespace Vet.Web.Data.Repositories
 
         public async Task<bool> ExistsAsync(int id)
         {
-            return await _context.Set<T>().AnyAsync(e => e.Id == id);
+            return await _context.Set<T>()
+                .AnyAsync(e => e.Id == id && !e.IsDeleted);
         }
 
         public IQueryable<T> GetAll()
         {
-            return _context.Set<T>().AsNoTracking();
+            return _context.Set<T>()
+                .Where(e => e.IsAproved && !e.IsDeleted)
+                .AsNoTracking();
         }
 
         public async Task<T> GetByIdAsync(int id)

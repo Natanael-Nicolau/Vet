@@ -45,10 +45,19 @@ namespace Vet.Web.Data.Repositories
             return await _context.Species.Where(s => s.Breeds.Any(b => b.Id == breed.Id)).FirstOrDefaultAsync();
         }
 
-        public IQueryable GetSpeciesWithBreeds()
+        public IQueryable<Specie> GetSpeciesWithBreeds()
         {
             return _context.Species
             .Include(s => s.Breeds)
+            .Where(s => !s.IsDeleted)
+            .Select(s => new Specie
+            {
+                Id = s.Id,
+                IsAproved = s.IsAproved,
+                IsDeleted = s.IsDeleted,
+                Name = s.Name,
+                Breeds = s.Breeds.Where(r => !r.IsDeleted).ToList()
+            })
             .OrderBy(s => s.Name);
         }
 
@@ -57,6 +66,14 @@ namespace Vet.Web.Data.Repositories
             return await _context.Species
              .Include(s => s.Breeds)
              .Where(s => s.Id == id)
+             .Select(s => new Specie
+             {
+                 Id = s.Id,
+                 IsAproved = s.IsAproved,
+                 IsDeleted = s.IsDeleted,
+                 Name = s.Name,
+                 Breeds = s.Breeds.Where(r => !r.IsDeleted).ToList()
+             })
              .FirstOrDefaultAsync();
         }
 

@@ -1,0 +1,92 @@
+﻿@model Vet.Web.Models.Appointments.DetailsViewModel
+
+@{
+    ViewData["Title"] = "Appointment Details";
+    ViewData["PageHeader"] = "Details";
+}
+
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Profile Image -->
+        <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+                <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.Start)</b>: <a class="float-right">@Html.DisplayFor(model => model.Start)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.End)</b>: <a class="float-right">@Html.DisplayFor(model => model.End)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.AnimalName)</b>: <a class="float-right">@Html.DisplayFor(model => model.AnimalName)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.DoctorFullName)</b>: <a class="float-right">@Html.DisplayFor(model => model.DoctorFullName)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.ClientFullName)</b>: <a class="float-right">@Html.DisplayFor(model => model.ClientFullName)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.SpecialityName)</b>: <a class="float-right">@Html.DisplayFor(model => model.SpecialityName)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.RoomName)</b>: <a class="float-right">@Html.DisplayFor(model => model.RoomName)</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        @if (this.User.IsInRole("Doctor"))
+        {
+            <a asp-action="Details" asp-controller="Animals" asp-route-id="@Model.AnimalId" class="btn btn-info" style="margin-bottom: 5px;"><i class="fa fa-paw"></i> View Animal Info</a>
+        }
+        <a onclick="deleteConfirm('@Model.Id')" class="btn btn-danger" style="margin-bottom: 5px;"><i class="fas fa-trash-alt"></i> Delete</a>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+        function deleteConfirm(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return fetch(`/Appointments/Delete?id=${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response)
+                            }
+                            Swal.fire(
+                                'Deleted!',
+                                'Appointment successfully deleted!',
+                                'success'
+                            ).then(() => {
+                                window.location.href = '@Url.Action("LoggedIndex", "Home")'
+                            });
+
+                        })
+                        .catch((response) => {
+                            Swal.fire(
+                                response.status.toString(),
+                                response.responseText,
+                                'error'
+                            )
+                        });
+                }
+            });
+        }
+    </script>
+
+}
+
+

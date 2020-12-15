@@ -1,0 +1,87 @@
+﻿@model Vet.Web.Models.Animals.DetailsViewModel
+
+@{
+    ViewData["Title"] = "Animal Details";
+    ViewData["PageHeader"] = "Details";
+}
+
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Profile Image -->
+        <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+                <div class="text-center">
+                    <img class="profile-user-img img-fluid img-circle"
+                         src="@Url.Content(Model.PictureUrl)"
+                         alt="User profile picture">
+                </div>
+
+                <h3 class="profile-username text-center">@Html.DisplayFor(model => model.Name)</h3>
+
+                <p class="text-muted text-center">@Html.DisplayFor(model => model.SpecieWithBreedName)</p>
+
+                <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.DateOfBirth)</b>: <a class="float-right">@Html.DisplayFor(model => model.DateOfBirth)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>@Html.DisplayNameFor(model => model.Weight)</b>: <a class="float-right">@Html.DisplayFor(model => model.Weight)</a>
+                    </li>                    
+                </ul>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <a asp-action="Edit" asp-controller="Animals" asp-route-id="@Model.Id" class="btn btn-info" style="margin-bottom: 5px;"><i class="fas fa-pencil-alt"></i> Edit</a>
+        @if (!this.User.IsInRole("Doctor"))
+        {
+            <a asp-action="Index" asp-controller="Animals" asp-route-id="@Model.OwnerId" class="btn btn-success" style="margin-bottom: 5px;"><i class="fas fa-undo-alt"></i> Return to List</a>
+            <a onclick="deleteConfirm('@Model.Id')" class="btn btn-danger" style="margin-bottom: 5px;"><i class="fas fa-trash-alt"></i> Delete</a>
+        }
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+        function deleteConfirm(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return fetch(`/Animals/Delete?id=${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response)
+                            }
+                            Swal.fire(
+                                'Deleted!',
+                                'Animal successfully deleted!',
+                                'success'
+                            ).then(() => {
+                                window.location.href = '/Animals/Index/@Model.OwnerId'
+    });
+})
+.catch((response) => {
+    Swal.fire(
+        response.status.toString(),
+        response.responseText,
+        'error'
+    )
+});
+}
+});
+}
+    </script>
+
+}
+
+

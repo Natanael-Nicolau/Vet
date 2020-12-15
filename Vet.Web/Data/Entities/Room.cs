@@ -19,6 +19,6 @@ namespace Vet.Web.Data.Entities
 
 
         public ICollection<Doctor> Doctors { get; set; }
-        public int NumberOfDoctors => Doctors == null ? 0 : Doctors.Count;
+        public int NumberOfDoctors => Doctors == null ? 0 : Doctors.Count(d => !d.IsDeleted);
     }
 }

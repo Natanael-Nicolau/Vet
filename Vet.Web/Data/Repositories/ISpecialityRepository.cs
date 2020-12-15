@@ -8,7 +8,7 @@ namespace Vet.Web.Data.Repositories
 {
     public interface ISpecialityRepository : IGenericRepository<Speciality>
     {
-        IQueryable GetSpecialitiesWithRooms();
+        IQueryable<Speciality> GetSpecialitiesWithRooms();
 
 
         Task<Speciality> GetSpecialityWithRoomsAsync(int id);

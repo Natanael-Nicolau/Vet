@@ -62,10 +62,13 @@ namespace Vet.Web.Data.Repositories
             return await _userManager.ResetPasswordAsync(user, token, password);
         }
 
-        public async Task<IList<User>> GetUsersInRoleAsync(string role)
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _userManager.GetUsersInRoleAsync(role);
+            IEnumerable<User> list = await _userManager.GetUsersInRoleAsync("Admin");
+            list = list.Concat(await _userManager.GetUsersInRoleAsync("Doctor"));
+            list = list.Concat(await _userManager.GetUsersInRoleAsync("Client"));
 
+            return list.Where(u => !u.IsDeleted);
         }
 
         public async Task AddUserToRoleAsync(User user, string roleName)

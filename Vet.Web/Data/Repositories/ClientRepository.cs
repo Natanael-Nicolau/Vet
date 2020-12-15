@@ -29,7 +29,7 @@ namespace Vet.Web.Data.Repositories
         {
             return await _context.Clients
                 .Include(c => c.User)
-                .Where(c => c.User.Id == email)
+                .Where(c => c.User.Email == email)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }

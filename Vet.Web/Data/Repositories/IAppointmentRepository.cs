@@ -19,6 +19,14 @@ namespace Vet.Web.Data.Repositories
 
         IQueryable<Appointment> GetUnavailableAppointments(DateTime day, int roomId);
 
-        IQueryable<Appointment> GetAllClient(int clientId);
+        Task<List<Appointment>> GetAllClient(int id);
+        Task<List<Appointment>> GetAllAdmin();
+
+        Task<Appointment> GetAppointmentWithAllAsync(int id);
+
+        Task<List<Appointment>> GetAllDoctor(int id);
+        Task<List<Appointment>> GetNotAprovedDoctor(int id);
+
+        new Task DeleteAsync(Appointment appointment);
     }
 }

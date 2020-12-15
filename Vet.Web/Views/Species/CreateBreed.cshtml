@@ -1,0 +1,48 @@
+﻿@model Vet.Web.Models.Species.CreateBreedViewModel
+
+@{
+    ViewData["Title"] = "Create Breed";
+    ViewData["PageHeader"] = "Create";
+}
+
+
+
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Breed Info</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="post" enctype="multipart/form-data">
+                <div class="card-body">
+                    <!--Validation Summary-->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="SpecieId" />
+                    <!--FirstName-->
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="form-control">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <!--FirstName End-->
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <div class="text-success">
+                        <p>
+                            @ViewBag.Message
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+<!-- /.row -->

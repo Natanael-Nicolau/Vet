@@ -22,7 +22,6 @@ namespace Vet.Web.Data
         public DbSet<Breed> Breeds { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
-        public DbSet<Employee> Employees { get; set; }
         public DbSet<InsuranceCompany> InsuranceCompanies { get; set; }
         public DbSet<Specie> Species { get; set; }
         public DbSet<Room> Rooms { get; set; }

@@ -19,11 +19,9 @@ namespace Vet.Web.Data.Repositories
         public IQueryable<Animal> GetClientAnimals(int ownerId)
         {
             return _context.Set<Animal>()
-                .Include(a => a.Owner)
-                .ThenInclude(u => u.User)
                 .Include(a => a.Breed)
                 .ThenInclude(b => b.Specie)
-                .Where(a => a.Owner.Id == ownerId)
+                .Where(a => a.Owner.Id == ownerId && !a.IsDeleted)
                 .AsNoTracking();
         }
     }

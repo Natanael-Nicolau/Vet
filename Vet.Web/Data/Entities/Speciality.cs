@@ -18,6 +18,6 @@ namespace Vet.Web.Data.Entities
         public ICollection<Room> Rooms { get; set; }
 
         [NotMapped]
-        public int NumberOfRooms => Rooms == null ? 0 : Rooms.Count;
+        public int NumberOfRooms => Rooms == null ? 0 : Rooms.Count(r => !r.IsDeleted);
     }
 }

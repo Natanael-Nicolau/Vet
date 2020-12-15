@@ -6,7 +6,7 @@ namespace Vet.Web.Data.Repositories
 {
     public interface ISpecieRepository : IGenericRepository<Specie>
     {
-        IQueryable GetSpeciesWithBreeds();
+        IQueryable<Specie> GetSpeciesWithBreeds();
 
         Task<Specie> GetSpecieWithBreedsAsync(int id);
 

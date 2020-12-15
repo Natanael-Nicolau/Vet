@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Vet.Web.Data;
 using Vet.Web.Data.Entities;
 using Vet.Web.Data.Repositories;
@@ -45,21 +47,36 @@ namespace Vet.Web
                 cfg.Password.RequireUppercase = false;
                 cfg.Password.RequiredLength = 6;
             })
+                .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.AddAuthentication()
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration["Tokens:Issuer"],
+                        ValidAudience = Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                    };
+                });
 
             services.AddDbContext<DataContext>(cfg =>
             {
                 if (_environment.IsDevelopment())
                 {
-
-                    cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
+                    cfg.UseSqlServer(this.Configuration.GetConnectionString("SomeeConnection"));
+                    //cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
                 }
                 else
                 {
-                    //TODO: publishing connection
                     cfg.UseSqlServer(this.Configuration.GetConnectionString("SomeeConnection"));
                 }
             });
+
+
+
 
             services.AddTransient<SeedDb>();
 
@@ -67,6 +84,7 @@ namespace Vet.Web
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
+            services.AddScoped<IComboHelper, ComboHelper>();
 
 
 
@@ -74,7 +92,6 @@ namespace Vet.Web
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IInsuranceCompanyRepository, InsuranceCompanyRepository>();
             services.AddScoped<ISpecieRepository, SpecieRepository>();
             services.AddScoped<ISpecialityRepository, SpecialityRepository>();
@@ -89,7 +106,11 @@ namespace Vet.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -106,6 +127,7 @@ namespace Vet.Web
                 app.UseHsts();
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();

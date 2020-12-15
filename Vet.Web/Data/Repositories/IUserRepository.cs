@@ -84,11 +84,10 @@ namespace Vet.Web.Data.Repositories
         Task<User> GetUserByIdAsync(string userId);
 
         /// <summary>
-        /// Generates a list of a select number of users based on the role of the requesting user
+        /// Returns a list with all the users (Need to add extra roles if they are created)
         /// </summary>
-        /// <param name="role">role of the requesting user</param>
         /// <returns></returns>
-        Task<IList<User>> GetUsersInRoleAsync(string role);
+        Task<IEnumerable<User>> GetAllUsersAsync();
 
         /// <summary>
         /// Searches the database for the role of a given user

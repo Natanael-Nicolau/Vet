@@ -13,10 +13,9 @@ namespace Vet.Web.Data.Entities
 
 
         public TimeSpan AppointmentDuration { get; set; }
+        public User User { get; set; }
+        public string UserId { get; set; }
 
-        public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
-        
 
         public int RoomId { get; set; }
         public Room Room { get; set; }

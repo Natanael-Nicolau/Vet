@@ -18,6 +18,6 @@ namespace Vet.Web.Data.Entities
         public ICollection<Breed> Breeds { get; set; }
 
         [NotMapped]
-        public int NumberOfBreeds => Breeds == null ? 0 : Breeds.Count;
+        public int NumberOfBreeds => Breeds == null ? 0 : Breeds.Count(b => !b.IsDeleted);
     }
 }

@@ -14,16 +14,14 @@ namespace Vet.Web.Data.Entities
 
         public DateTime? Start { get; set; }
 
-        [NotMapped]
-        public DateTime? End => (Start.Value + Doctor.AppointmentDuration);
-
-
-
         public Doctor Doctor { get; set; }
         public int DoctorId { get; set; }
 
         public Animal Animal { get; set; }
         public int AnimalId { get; set; }
+
+        [NotMapped]
+        public DateTime? End => (Start.Value + Doctor.AppointmentDuration);
 
 
 

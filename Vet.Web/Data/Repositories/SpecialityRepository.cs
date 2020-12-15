@@ -32,7 +32,6 @@ namespace Vet.Web.Data.Repositories
         public async Task<int> DeleteRoomAsync(Room room)
         {
             room.IsDeleted = true;
-            _context.Rooms.Remove(room);
             return await this.UpdateRoomAsync(room);
         }
 
@@ -42,10 +41,19 @@ namespace Vet.Web.Data.Repositories
             return await _context.Rooms.FindAsync(id);
         }
 
-        public IQueryable GetSpecialitiesWithRooms()
+        public IQueryable<Speciality> GetSpecialitiesWithRooms()
         {
             return _context.Specialities
             .Include(s => s.Rooms)
+            .Where(s => !s.IsDeleted)
+            .Select( s => new Speciality
+            {
+                Id = s.Id,
+                IsAproved = s.IsAproved,
+                IsDeleted = s.IsDeleted,
+                Name = s.Name,
+                Rooms = s.Rooms.Where(r => !r.IsDeleted).ToList()
+            })
             .OrderBy(s => s.Name);
         }
 
@@ -59,6 +67,14 @@ namespace Vet.Web.Data.Repositories
             return await _context.Specialities
              .Include(s => s.Rooms)
              .Where(s => s.Id == id)
+             .Select(s => new Speciality
+             {
+                 Id = s.Id,
+                 IsAproved = s.IsAproved,
+                 IsDeleted = s.IsDeleted,
+                 Name = s.Name,
+                 Rooms = s.Rooms.Where(r => !r.IsDeleted).ToList()
+             })
              .FirstOrDefaultAsync();
         }
 

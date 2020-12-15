@@ -1,0 +1,170 @@
+﻿@model Vet.Web.Models.Account.CreateViewModel
+
+@{
+    ViewData["Title"] = "New User";
+    ViewData["PageHeader"] = "Create";
+}
+
+
+
+<div class="row">
+    <!-- left column -->
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">User Info</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="post" enctype="multipart/form-data">
+                <div class="card-body">
+                    <!--Validation Summary-->
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!--FirstName-->
+                    <div class="form-group">
+                        <label asp-for="FirstName"></label>
+                        <input asp-for="FirstName" class="form-control">
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <!--FirstName End-->
+                    <!--LastName-->
+                    <div class="form-group">
+                        <label asp-for="LastName"></label>
+                        <input asp-for="LastName" class="form-control">
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <!--LastName End-->
+                    <!--Email-->
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" type="email" class="form-control">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <!--Email End-->
+                    <!--NIF-->
+                    <div class="form-group">
+                        <label asp-for="NIF"></label>
+                        <input asp-for="NIF" class="form-control">
+                        <span asp-validation-for="NIF" class="text-danger"></span>
+                    </div>
+                    <!--NIF End-->
+                    <!--SS-->
+                    <div class="form-group">
+                        <label asp-for="SS"></label>
+                        <input asp-for="SS" class="form-control">
+                        <span asp-validation-for="SS" class="text-danger"></span>
+                    </div>
+                    <!--SS End-->
+                    <!--Photo-->
+                    <div class="form-group">
+                        <label asp-for="Photo"></label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input asp-for="Photo" type="file" class="form-control">
+                                <span asp-validation-for="Photo" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Photo End-->
+                    <!--DateOfBirth-->
+                    <div class="form-group">
+                        <label asp-for="DateOfBirth"></label>
+                        <input asp-for="DateOfBirth" type="date" class="form-control">
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <!--DateOfBirth End-->
+                    <!--Role-->
+                    <div class="form-group">
+                        <label asp-for="Role"></label>
+                        <select asp-for="Role" asp-items="Model.Roles" class="form-control"></select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                    <!--Roles End-->
+                    <!--AppointmentDuration-->
+                    <div class="form-group">
+                        <label asp-for="AppointmentDuration"></label>
+                        <input asp-for="AppointmentDuration" class="form-control" disabled="disabled">
+                        <span asp-validation-for="AppointmentDuration" class="text-danger"></span>
+                    </div>
+
+                    <!--AppointmentDuration End-->
+                    <!--SpecialityId-->
+                    <div class="form-group">
+                        <label asp-for="SpecialityId"></label>
+                        <select asp-for="SpecialityId" asp-items="Model.Specialities" class="form-control" disabled="disabled"></select>
+                        <span asp-validation-for="SpecialityId" class="text-danger"></span>
+                    </div>
+                    <!--SpecialityId End-->
+                    <!--RoomId-->
+                    <div class="form-group">
+                        <label asp-for="RoomId"></label>
+                        <select asp-for="RoomId" asp-items="Model.Rooms" class="form-control" disabled="disabled"></select>
+                        <span asp-validation-for="RoomId" class="text-danger"></span>
+                    </div>
+                    <!--RoomId End-->
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <div class="text-success">
+                        <p>
+                            @ViewBag.Message
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+<!-- /.row -->
+
+
+@section Scripts{ 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#SpecialityId").change(function () {
+                $("#RoomId").empty();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetRoomsAsync")',
+                    dataType: 'json',
+                    data: { specialityId: $("#SpecialityId").val() },
+                    success: function (rooms) {
+                        $.each(rooms, function (i, room) {
+                            $("#RoomId").append('<option value="'
+                                + room.value + '">'
+                                + room.text + '</option>');
+                        });
+                    },
+                    error: function (ex) {
+                        alert('Failed updating the rooms.' + ex);
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Role").change(function () {
+                if ($("#Role").val() === 'Doctor') {
+                    $('#AppointmentDuration').prop('disabled', false);
+                    $('#SpecialityId').prop('disabled', false);
+                    $('#RoomId').prop('disabled', false);
+                }
+                else {
+                    $('#AppointmentDuration').prop('disabled', true);
+                    $('#SpecialityId').prop('disabled', true);
+                    $('#RoomId').prop('disabled', true);
+                }
+                return false;
+            });
+        });
+    </script>
+}

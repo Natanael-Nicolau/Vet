@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vet.Web.Data.Entities;
+using Vet.Web.Models.Appointments;
 
 namespace Vet.Web.Data.Repositories
 {
@@ -23,16 +24,73 @@ namespace Vet.Web.Data.Repositories
                     .AsNoTracking();
         }
 
-        public IQueryable<Appointment> GetAllClient(int clientId)
+
+        public async Task<List<Appointment>> GetAllClient(int id)
         {
-            return _context.Set<Appointment>()
-                    .Where(a => a.Animal.Owner.Id == clientId)
+            return await _context.Set<Appointment>()
+                    .Where(a => a.Animal.Owner.Id == id && a.IsAproved && !a.IsDeleted)
                     .Include(a => a.Doctor)
-                    .ThenInclude(d => d.Employee.User)
+                    .ThenInclude(d => d.User)
                     .Include(a => a.Animal)
                     .ThenInclude(a => a.Owner.User)
-                    .AsNoTracking();
+                    .ToListAsync();
         }
+
+        public async Task<List<Appointment>> GetAllDoctor(int id)
+        {
+            return await _context.Set<Appointment>()
+                    .Where(a => a.Doctor.Id == id && a.IsAproved && !a.IsDeleted)
+                    .Include(a => a.Doctor)
+                    .ThenInclude(d => d.User)
+                    .Include(a => a.Animal)
+                    .ThenInclude(a => a.Owner.User)
+                    .ToListAsync();
+        }
+
+        public async Task<List<Appointment>> GetNotAprovedDoctor(int id)
+        {
+            return await _context.Appointments
+                    .Where(a => a.DoctorId == id && !a.IsAproved)
+                    .Include(a => a.Doctor)
+                        .ThenInclude(d => d.User)
+                    .Include(a => a.Animal)
+                        .ThenInclude(a => a.Owner.User)
+                        .ToListAsync();
+        }
+
+        public async Task<List<Appointment>> GetAllAdmin()
+        {
+            return await _context.Set<Appointment>()
+                    .Where(a => a.IsAproved && !a.IsDeleted)
+                    .Include(a => a.Doctor)
+                    .ThenInclude(d => d.User)
+                    .Include(a => a.Animal)
+                    .ThenInclude(a => a.Owner.User)
+                    .ToListAsync();
+        }
+
+        public async Task<Appointment> GetAppointmentWithAllAsync(int id)
+        {
+            return await _context.Appointments
+                .Where(a => a.Id == id)
+                .Include(a => a.Animal)
+                    .ThenInclude(a => a.Owner)
+                        .ThenInclude(c => c.User)
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.User)
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.Room)
+                        .ThenInclude(r => r.Speciality)
+                .FirstOrDefaultAsync();
+                
+
+
+        }
+
+
+
+
+
 
         public IQueryable<Appointment> GetDayAppointmentsForClient(int clientId)
         {
@@ -83,6 +141,12 @@ namespace Vet.Web.Data.Repositories
                  .Where(a => a.Start.Value.Date == day.Date)
                  .Where(a => a.Doctor.RoomId == roomId)                 
                  .AsNoTracking();
+        }
+
+        public new async Task DeleteAsync(Appointment appointment)
+        {
+            _context.Remove(appointment);
+            await _context.SaveChangesAsync();
         }
     }
 }
